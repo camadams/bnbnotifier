@@ -22,8 +22,7 @@ export default function Home() {
         <div className="w-full flex-1 flex-col flex justify-center gap-4 rounded-full -mt-20 items-center">
           <h1 className="text-red-500 md:text-5xl text-3xl">
             Get <span className="underline">notified</span> as soon as Airbnb
-            listings
-            <br /> become available
+            listings become available
           </h1>
           <h2>
             No subscription charge, pay only for notification credits. <br />
