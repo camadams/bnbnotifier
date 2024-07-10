@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { NavBar } from "./navbar";
 
 export default function Home() {
   return (
@@ -13,28 +15,14 @@ export default function Home() {
           fill
         />
       </div>
-      <div className="absolute inset-0 -z-1  bg-white/95"></div>
+      <div className="absolute inset-0 -z-1  bg-white/85"></div>
 
       <div className="w-full h-screen absolute inset-0 flex flex-col md:px-32 px-4">
-        <nav className="w-full flex justify-between items-center p-8">
-          <div className="font-bold text-2xl tracking-wider">
-            BNB<span className="text-red-500">Notifier</span>
-          </div>
-          <div className="flex items-center justify-center gap-6 ">
-            <Link href="/signup" className="">
-              Pricing
-            </Link>
-            <Link
-              href="/signup"
-              className="rounded-lg px-3 py-1 bg-red-500 text-white"
-            >
-              Sign up
-            </Link>
-          </div>
-        </nav>
+        <NavBar />
         <div className="w-full flex-1 flex-col flex justify-center gap-4 rounded-full -mt-20 items-center">
           <h1 className="text-red-500 md:text-5xl text-3xl">
-            Get <span className="underline">notified</span> as soon as listings
+            Get <span className="underline">notified</span> as soon as Airbnb
+            listings
             <br /> become available
           </h1>
           <h2>
