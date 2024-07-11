@@ -7,16 +7,18 @@ import Spinner from "../spinner";
 export default function Form() {
   const [state, action] = useFormState(addEmailForSignUp, null);
   return (
-    <form action={action} className="flex items-center">
-      <input
-        className="md:p-8 p-2 rounded-lg w-fit "
-        placeholder="Enter your email address"
-        type="email"
-        name="email"
-      />
-      <SubmitButton />
-      {state?.message}
-    </form>
+    <>
+      <form action={action} className="flex items-center">
+        <input
+          className="md:p-8 p-2 rounded-lg w-fit "
+          placeholder="Enter your email address"
+          type="email"
+          name="email"
+        />
+        <SubmitButton />
+      </form>
+      <p>{state?.message}</p>
+    </>
   );
 }
 
