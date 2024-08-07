@@ -1,10 +1,4 @@
-import {
-  scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain,
-  scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap,
-} from "@/app/dashboard/action";
-import { db } from "@/db";
-import { urlTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain } from "@/app/dashboard/action";
 import { NextResponse } from "next/server";
 
 export const maxDuration = 60;
