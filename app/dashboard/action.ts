@@ -1,11 +1,11 @@
 "use server";
-import puppeteer, { launch } from "puppeteer";
+import puppeteer from "puppeteer";
 
 import { Product } from "@lemonsqueezy/lemonsqueezy.js";
 import { db } from "@/db";
 import { SelectUrl, urlTable, userTable } from "@/db/schema";
 import { revalidatePath } from "next/cache";
-import { asc, desc, eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 
 import chromium from "@sparticuz/chromium";
 import { Resend } from "resend";
@@ -132,10 +132,13 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     userId = "i7fgwzytczbgovsg";
   }
   let browser = null;
+  console.log({ here135: 1 });
   try {
     const launchConfig = await getLaunchConfig();
     console.log({ launchConfig });
     browser = await puppeteer.launch(launchConfig);
+    console.log({ here140: 1 });
+
     let page = await browser.newPage();
     await page.goto(urlBean?.url ?? newUrl, { waitUntil: "networkidle0" });
     const roomLinks = await page.evaluate(() => {
