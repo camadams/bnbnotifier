@@ -150,7 +150,7 @@ export default function Dashboard() {
                 )}
                 <div className="p-2 bg-slate-100 rounded-2xl space-x-4 text-xs">
                   Last Scraped:{" "}
-                  {format(urlObject.lastScraped, "dd MMMM yyyy, ppp")}
+                  {format(urlObject.lastScraped, "d MMM yyyy, ppp")}
                 </div>
               </div>
             );
