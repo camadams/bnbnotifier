@@ -1,5 +1,5 @@
 "use server";
-import puppeteer from "puppeteer";
+import puppeteer, { launch } from "puppeteer";
 
 import { Product } from "@lemonsqueezy/lemonsqueezy.js";
 import { db } from "@/db";
@@ -133,7 +133,9 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
   }
   let browser = null;
   try {
-    browser = await puppeteer.launch(await getLaunchConfig());
+    const launchConfig = await getLaunchConfig();
+    console.log({launchConfig})
+    browser = await puppeteer.launch(launchConfig);
     let page = await browser.newPage();
     await page.goto(urlBean?.url ?? newUrl, { waitUntil: "networkidle0" });
     const roomLinks = await page.evaluate(() => {

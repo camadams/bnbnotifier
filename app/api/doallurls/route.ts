@@ -7,7 +7,7 @@ import { urlTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-const repeatHours = 12;
+export const maxDuration = 60;
 
 export async function GET() {
   const res = await scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain();
