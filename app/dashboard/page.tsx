@@ -86,17 +86,20 @@ export default function Dashboard() {
         <h1 className="text-4xl ">Hi {user.username} !</h1>
         {/* {data ? <p>data is truthy {data.user_email}</p> : <p>data is falsey</p>} */}
         <p>You have {user.notifications_count} notifications left</p>
-        {!product ? (
-          <Spinner />
-        ) : (
-          <a
-            target="_"
-            className="mt-8 bg-red-400 px-3 py-1 rounded-full hover:bg-red-200"
-            href={`${product.data.attributes.buy_now_url}?checkout[custom][userId]=${user.id}`}
-          >
-            Get Notifications
-          </a>
-        )}
+
+        <a
+          target="_"
+          className={`mt-8 ${
+            product ? "bg-red-400 " : "bg-red-100 pointer-events-none"
+          }  px-3 py-1 rounded-full hover:bg-red-500`}
+          href={
+            product
+              ? `${product.data.attributes.buy_now_url}?checkout[custom][userId]=${user.id}`
+              : ""
+          }
+        >
+          Get Notifications
+        </a>
       </div>
 
       <Urls />
@@ -107,7 +110,9 @@ export default function Dashboard() {
     return (
       <div className="flex gap-2 text-sx">
         {!urlObjects ? (
-          <Spinner />
+          <div className="w-1/3 bg-slate-200 rounded-lg flex items-center justify-center">
+            <Spinner />
+          </div>
         ) : (
           urlObjects?.map((urlObject, i) => {
             const url = parseAirbnbSearchParams(urlObject.url);
