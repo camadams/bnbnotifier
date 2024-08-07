@@ -155,8 +155,12 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     }
     return { res: "all good" };
   } catch (error) {
-    console.error("Error scraping Airbnb URL:", error);
-    return { error: "Failed to scrape the Airbnb URL" };
+    console.log("Error scraping Airbnb URL:", error);
+    return {
+      error: `Failed to scrape the Airbnb URL. Error message: ${
+        (error as Error).message
+      }`,
+    };
   } finally {
     if (browser) {
       await browser.close();
