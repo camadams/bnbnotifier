@@ -176,6 +176,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
+      ignoreDefaultArgs: ["--disable-extensions"],
     };
   }
 
