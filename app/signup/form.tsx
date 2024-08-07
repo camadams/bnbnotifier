@@ -1,23 +1,25 @@
 "use client";
-
 import { useFormState, useFormStatus } from "react-dom";
-import { addEmailForSignUp } from "./actions";
+import { signUp } from "./actions";
 import Spinner from "../spinner";
-
-export default function Form() {
-  const [state, action] = useFormState(addEmailForSignUp, null);
+import Arrow from "./../arrow";
+export default function SignUpForm() {
+  const [state, action] = useFormState(signUp, null);
+  const status = useFormStatus();
   return (
     <>
-      <form action={action} className="flex items-center">
-        <input
-          className="md:p-8 p-2 rounded-lg w-fit "
-          placeholder="Enter your email address"
-          type="email"
-          name="email"
-        />
+      <h1>Create an account</h1>
+      {/* <form action={action}> */}
+      <form action={action}>
+        <label htmlFor="username">Username</label>
+        <input name="username" id="username" />
+        <br />
+        <label htmlFor="password">Password</label>
+        <input type="password" name="password" id="password" />
+        <br />
         <SubmitButton />
       </form>
-      <p>{state?.message}</p>
+      <p className="bg-red-400 w-32">{state?.message}</p>
     </>
   );
 }
@@ -26,20 +28,7 @@ export function SubmitButton() {
   const status = useFormStatus();
   return (
     <button className="ml-2  bg-red-600 text-white rounded-full p-3">
-      {status.pending ? (
-        <Spinner />
-      ) : (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className="w-6 h-6"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-      )}
+      {status.pending ? <Spinner /> : <Arrow />}
     </button>
   );
 }
