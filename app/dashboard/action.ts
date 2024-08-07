@@ -134,7 +134,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
   let browser = null;
   try {
     const launchConfig = await getLaunchConfig();
-    console.log({launchConfig})
+    console.log({ launchConfig });
     browser = await puppeteer.launch(launchConfig);
     let page = await browser.newPage();
     await page.goto(urlBean?.url ?? newUrl, { waitUntil: "networkidle0" });
@@ -170,15 +170,13 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
   }
 
   async function getLaunchConfig() {
-    return process.env.NODE_ENV == "development"
-      ? {}
-      : {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
-          executablePath: await chromium.executablePath(),
-          headless: chromium.headless,
-          ignoreHTTPSErrors: true,
-        };
+    return {
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
+    };
   }
 
   async function checkDiffEmailUpdate(
