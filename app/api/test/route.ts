@@ -11,7 +11,6 @@ export async function GET() {
   let browser = null;
   let resp = null;
   console.log({ here: 12 });
-
   try {
     browser = await puppeteer.launch({
       args: chromium.args,
@@ -37,14 +36,11 @@ export async function GET() {
 
     // result = await page.title();
     result = roomLinks;
-
     // const turso = createClient({
     //   url: process.env.TURSO_DATABASE_URL,
     //   authToken: process.env.TURSO_AUTH_TOKEN,
     // });
-
     // const users = await turso.execute("SELECT * FROM user");
-
     resp = JSON.stringify({
       statusCode: 200,
       body: result,
@@ -56,12 +52,12 @@ export async function GET() {
     });
   } catch (error) {
     console.log("error at index.js", (error as Error).message);
-    return NextResponse.json((error as Error).message);
+    return NextResponse.json((error as Error).message, { status: 400 });
   } finally {
     if (browser !== null) {
       await browser.close();
     }
   }
 
-  return NextResponse.json(resp);
+  return NextResponse.json(resp, { status: 200 });
 }
