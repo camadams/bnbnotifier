@@ -1,7 +1,7 @@
 import { scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain } from "@/app/dashboard/action";
 import { NextResponse } from "next/server";
 
-export const maxDuration = 60;
+export const maxDuration = 30;
 
 export async function GET() {
   const res = await scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain();
