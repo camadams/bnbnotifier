@@ -155,7 +155,6 @@ export async function processWebhookEvent(webhookEvent: NewWebhookEvent) {
         console.error("No userId was received from the webhook ");
         processingError += "No userId was received from the webhook ";
       }
-
       const user = await db.query.userTable.findFirst({
         where: eq(userTable.id, userIdFromWebhook),
       });

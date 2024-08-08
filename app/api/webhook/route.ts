@@ -44,5 +44,5 @@ export async function POST(request: Request) {
     return new Response("OK", { status: 200 });
   }
 
-  return new Response("OK", { status: 200 });
+  return new Response("No webhook meta", { status: 200 });
 }
