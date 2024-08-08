@@ -254,10 +254,13 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
 
 export async function scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain() {
   const result = await processUrl();
+  console.log({ here257: 1, result });
+  console.log({ here258: 1, "result === undefined": result === undefined });
   if (result === undefined) {
+    console.log({ here259: 1, ta: result });
     await db.update(urlTable).set({ processed: false });
-    const result = await processUrl();
-    return { ...result };
+    const resultt = await processUrl();
+    return { ...resultt };
   } else {
     return { ...result };
   }

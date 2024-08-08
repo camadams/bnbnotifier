@@ -5,6 +5,7 @@ import { useState } from "react";
 import Spinner from "../spinner";
 import { User } from "lucia";
 import LoadingBlock from "./loadingBlock";
+import { revalidatePath } from "next/cache";
 
 export default function MyForm({ user }: { user: User | null }) {
   const [message, setMessage] = useState("");
@@ -33,6 +34,9 @@ export default function MyForm({ user }: { user: User | null }) {
       }
     } catch (error) {
       setMessage(`Error: ${(error as Error).message}`);
+    } finally {
+      window.location.reload();
+      // revalidatePath("/dashboard");
     }
   }
 

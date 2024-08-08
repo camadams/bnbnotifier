@@ -1,4 +1,5 @@
 import { scrapUrlAndAdd } from "@/app/dashboard/action";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export const maxDuration = 50;
@@ -20,5 +21,6 @@ export async function POST(req: NextRequest) {
   formData.append("userId", userId);
 
   const res = await scrapUrlAndAdd("", formData);
+  revalidatePath("/");
   return NextResponse.json(res, { status: 200 });
 }
