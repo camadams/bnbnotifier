@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import puppeteer from "puppeteer";
 export const maxDuration = 30;
 // const { createClient } = require("@libsql/client");
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   const url =
