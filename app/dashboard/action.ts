@@ -11,6 +11,8 @@ import chromium from "@sparticuz/chromium";
 import { Resend } from "resend";
 import EmailTemplate from "./email-template";
 import { User } from "lucia";
+export const maxDuration = 50;
+export const dynamic = "force-dynamic";
 const test = true;
 type prodScrapType =
   | {
