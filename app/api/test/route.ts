@@ -52,12 +52,12 @@ export async function GET() {
     });
   } catch (error) {
     console.log("error at index.js", (error as Error).message);
-    return NextResponse.json((error as Error).message);
+    return NextResponse.json((error as Error).message, { status: 200 });
   } finally {
     if (browser !== null) {
       await browser.close();
     }
   }
 
-  return NextResponse.json(resp);
+  return NextResponse.json(resp, { status: 200 });
 }
