@@ -17,6 +17,6 @@ export async function GET() {
   //     );
 
   //  await db.query.urlTable.findMany({ where: eq(urlTable.lastScraped, 12) });
-  return NextResponse.json(res);
+  return NextResponse.json(res, { status: 200 });
   // return NextResponse.json({ msg: res?.msg });
 }
