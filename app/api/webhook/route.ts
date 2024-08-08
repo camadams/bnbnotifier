@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     console.log({ here40: webhookEventId });
 
     // Non-blocking call to process the webhook event.
-    void processWebhookEvent(webhookEventId);
+    await processWebhookEvent(webhookEventId);
 
     return new Response("OK", { status: 200 });
   }
