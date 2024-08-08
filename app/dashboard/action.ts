@@ -11,8 +11,8 @@ import chromium from "@sparticuz/chromium";
 import { Resend } from "resend";
 import EmailTemplate from "./email-template";
 import { User } from "lucia";
-export const maxDuration = 50;
-export const dynamic = "force-dynamic";
+// export const maxDuration = 50;
+// export const dynamic = "force-dynamic";
 const test = true;
 type prodScrapType =
   | {
@@ -60,10 +60,10 @@ export async function scrapUrlAndAdd(_: any, formData: FormData) {
         userId
       );
     if (scrapResult.error !== undefined) {
-      return { isOk: false, msg: "failed to scrap url: " + url };
+      return { ...scrapResult };
     } else {
       revalidatePath("/dashboard", "page");
-      return { isOk: true, msg: "Successfully added url" };
+      return { ...scrapResult };
     }
   } catch (error) {
     const errorMessage = (error as Error).message;
@@ -175,14 +175,16 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
   }
 
   async function getLaunchConfig() {
-    return {
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-      ignoreHTTPSErrors: true,
-      ignoreDefaultArgs: ["--disable-extensions"],
-    };
+    return process.env.NODE_ENV == "development"
+      ? {}
+      : {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath(),
+          headless: chromium.headless,
+          ignoreHTTPSErrors: true,
+          ignoreDefaultArgs: ["--disable-extensions"],
+        };
   }
 
   async function checkDiffEmailUpdate(

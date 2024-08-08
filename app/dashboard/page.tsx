@@ -11,9 +11,11 @@ import { redirect } from "next/navigation";
 import { Product } from "@lemonsqueezy/lemonsqueezy.js";
 import { format } from "date-fns";
 import { SelectUrl } from "@/db/schema";
+import MyForm from "./formForApi";
+import LoadingBlock from "./loadingBlock";
 
 export default function Dashboard() {
-  const [state, action] = useFormState(scrapUrlAndAdd, null);
+  // const [state, action] = useFormState(scrapUrlAndAdd, null);
   const [url, setUrl] = useState<AirbnbSearchParams>();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -71,7 +73,7 @@ export default function Dashboard() {
     };
 
     fetchUrls();
-  }, [user, state]);
+  }, [user]);
 
   if (loading) {
     return "loading";
@@ -110,9 +112,7 @@ export default function Dashboard() {
     return (
       <div className="flex gap-2 text-sx">
         {!urlObjects ? (
-          <div className="w-1/3 bg-slate-200 rounded-lg flex items-center justify-center">
-            <Spinner />
-          </div>
+          <LoadingBlock />
         ) : (
           urlObjects?.map((urlObject, i) => {
             const url = parseAirbnbSearchParams(urlObject.url);
@@ -181,7 +181,7 @@ export default function Dashboard() {
           >
             Or click here to copy an example
           </button>
-          <form action={action} className="space-y-6 flex flex-col">
+          {/* <form action={action} className="space-y-6 flex flex-col">
             <div className="flex">
               <label htmlFor="username">URL</label>
               <input
@@ -196,7 +196,8 @@ export default function Dashboard() {
               <input hidden name="userId" defaultValue={user?.id} />
             </div>
             <SubmitButton />
-          </form>
+          </form> */}
+          <MyForm user={user} />
         </div>
       );
     }
