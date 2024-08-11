@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { SelectUrl } from "@/db/schema";
 import MyForm from "./formForApi";
 import LoadingBlock from "./loadingBlock";
+import { formatTimeDifference } from "@/lib/dateUtil";
 
 export default function Dashboard() {
   // const [state, action] = useFormState(scrapUrlAndAdd, null);
@@ -154,8 +155,7 @@ export default function Dashboard() {
                   </div>
                 )}
                 <div className="p-2 bg-slate-100 rounded-2xl space-x-4 text-xs">
-                  Last Scraped:{" "}
-                  {format(urlObject.lastScraped, "d MMM yyyy, ppp")}
+                  Last Scraped: {formatTimeDifference(urlObject.lastScraped)}
                 </div>
               </div>
             );

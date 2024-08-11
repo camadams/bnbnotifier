@@ -1,4 +1,4 @@
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   console.log("pinged from aws!");
-  return new Response("ok", { status: 200 });
+  return Response.json({ msg: 1 }, { status: 200 });
 }
