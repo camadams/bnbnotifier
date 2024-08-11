@@ -11,6 +11,7 @@ import chromium from "@sparticuz/chromium";
 import { Resend } from "resend";
 import EmailTemplate from "./email-template";
 import { User } from "lucia";
+import { sendEmail } from "@/lib/email";
 // export const maxDuration = 50;
 // export const dynamic = "force-dynamic";
 const test = true;
@@ -134,14 +135,11 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     userId = "i7fgwzytczbgovsg";
   }
   let browser = null;
-  console.log({ here135: 1 });
   try {
     const launchConfig = await getLaunchConfig();
-    console.log({ launchConfig });
     browser = await puppeteer.launch(launchConfig);
-    console.log({ here140: 1 });
-
     let page = await browser.newPage();
+    page.setDefaultNavigationTimeout(0);
     await page.goto(urlBean?.url ?? newUrl, { waitUntil: "networkidle0" });
     const roomLinks = await page.evaluate(() => {
       const anchorTags = document.querySelectorAll("a");
@@ -151,7 +149,12 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
       return Array.from(new Set(hrefs)); // Remove duplicate links
     });
     if (urlBean) {
-      checkDiffEmailUpdate(roomLinks, urlBean, userId, urlBean.url);
+      checkIfDiffEmailUpdateDeductNotiCreditsUpdateUrlAsProcessed(
+        roomLinks,
+        urlBean,
+        userId,
+        urlBean.url
+      );
     } else {
       await db.insert(urlTable).values({
         userId,
@@ -187,7 +190,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         };
   }
 
-  async function checkDiffEmailUpdate(
+  async function checkIfDiffEmailUpdateDeductNotiCreditsUpdateUrlAsProcessed(
     newScrapedUrlsArr: string[],
     oldUrlObject: SelectUrl,
     userId: string,
@@ -207,22 +210,11 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         return { error: `Could not find user with userId: ${userId}` };
       }
 
-      const resend = new Resend(process.env.RESEND_API_KEY);
-
-      const { data, error } = await resend.emails.send({
-        from: "Acme <onboarding@resend.dev>",
-        to: [
-          process.env.NODE_ENV == "development"
-            ? "camgadams@gmail.com"
-            : user.username,
-        ],
-        subject: "Hello world",
-        react: EmailTemplate({
-          user,
-          airbnbSearchUrl,
-          oldScrapedUrlsArr,
-          newScrapedUrlsArr,
-        }) as React.ReactElement,
+      const { data, error } = await sendEmail({
+        user,
+        airbnbSearchUrl,
+        oldScrapedUrlsArr,
+        newScrapedUrlsArr,
       });
 
       if (error) {
@@ -244,20 +236,20 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         })
         .where(eq(userTable.id, userId));
     }
-    await db.update(urlTable).set({
-      listingUrls: newScrapedUrlsArr.join(","),
-      processed: true,
-      lastScraped: new Date(),
-    });
+    await db
+      .update(urlTable)
+      .set({
+        listingUrls: newScrapedUrlsArr.join(","),
+        processed: true,
+        lastScraped: new Date(),
+      })
+      .where(eq(urlTable.url, urlBean?.url ?? newUrl));
   }
 }
 
 export async function scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain() {
   const result = await processUrl();
-  console.log({ here257: 1, result });
-  console.log({ here258: 1, "result === undefined": result === undefined });
   if (result === undefined) {
-    console.log({ here259: 1, ta: result });
     await db.update(urlTable).set({ processed: false });
     const resultt = await processUrl();
     return { ...resultt };

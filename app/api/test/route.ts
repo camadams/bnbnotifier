@@ -11,7 +11,6 @@ export async function GET() {
   let result = null;
   let browser = null;
   let resp = null;
-  console.log({ here: 12 });
   try {
     browser = await puppeteer.launch({
       args: chromium.args,
@@ -20,12 +19,8 @@ export async function GET() {
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
-    console.log({ here: 22 });
-
     let page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle0" });
-    console.log({ here: 26 });
-
     const roomLinks = await page.evaluate(() => {
       const anchorTags = document.querySelectorAll("a");
       const hrefs = Array.from(anchorTags)
@@ -33,8 +28,6 @@ export async function GET() {
         .filter((href) => href.includes("/rooms/"));
       return Array.from(new Set(hrefs)); // Remove duplicate links
     });
-    console.log({ here: 35, roomLinks });
-
     // result = await page.title();
     result = roomLinks;
     // const turso = createClient({

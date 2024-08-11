@@ -65,14 +65,10 @@ export async function storeWebhookEvent(
  */
 export async function processWebhookEvent(webhookEvent: NewWebhookEvent) {
   // configureLemonSqueezy();
-
   const dbwebhookEvent = await db
     .select()
     .from(webhookEvents)
     .where(eq(webhookEvents.id, webhookEvent.id));
-
-  console.log({ dbwebhookEvent });
-
   if (dbwebhookEvent.length < 1) {
     throw new Error(
       `Webhook event #${webhookEvent.id} not found in the database.`
@@ -86,7 +82,6 @@ export async function processWebhookEvent(webhookEvent: NewWebhookEvent) {
   // }
   let processingError = "";
   const eventBody = webhookEvent.body;
-  console.log({ eventBody });
   if (!webhookHasMeta(eventBody)) {
     processingError = "Event body is missing the 'meta' property.";
   } else if (webhookHasData(eventBody)) {
@@ -155,8 +150,6 @@ export async function processWebhookEvent(webhookEvent: NewWebhookEvent) {
         */
     if (webhookEvent.eventName.startsWith("order_")) {
       const userIdFromWebhook = eventBody.meta.custom_data.userId as string;
-      console.log({ userIdFromWebhook });
-
       if (!userIdFromWebhook) {
         console.error("No userId was received from the webhook ");
         processingError += "No userId was received from the webhook ";
@@ -164,9 +157,6 @@ export async function processWebhookEvent(webhookEvent: NewWebhookEvent) {
       const user = await db.query.userTable.findFirst({
         where: eq(userTable.id, userIdFromWebhook),
       });
-
-      console.log({ user });
-
       if (!user) {
         const ta = `Failed to load user with id: ${userIdFromWebhook}. Received a webhook that the user paid for notification credits. Could not update this users notification count.`;
         console.error(ta);
