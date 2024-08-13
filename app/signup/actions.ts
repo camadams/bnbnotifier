@@ -66,7 +66,7 @@ export async function signUp(_: any, formData: FormData) {
       id: userId,
       username: username,
       password_hash: passwordHash,
-      emailAddress,
+      emailAddress: emailAddress,
     });
   } catch (error) {
     return {
