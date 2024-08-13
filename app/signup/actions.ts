@@ -49,11 +49,27 @@ export async function signUp(_: any, formData: FormData) {
   //   });
   const userId = generateIdFromEntropySize(10); // 16 characters long
 
+  const emailAddress = formData.get("emailAddress");
+  if (
+    typeof emailAddress !== "string" ||
+    emailAddress.length < 6 ||
+    emailAddress.length > 255
+  ) {
+    return {
+      message: "Invalid emailAddress. Please enter 7 or more characters.",
+    };
+  }
+
   try {
     // TODO: check if username is already used
     await db
       .insert(userTable)
-      .values({ id: userId, username: username, password_hash: passwordHash });
+      .values({
+        id: userId,
+        username: username,
+        password_hash: passwordHash,
+        emailAddress,
+      });
   } catch (error) {
     return {
       message: (error as Error).message + " \n\n .Refresh and try again.",
