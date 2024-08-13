@@ -2,8 +2,6 @@ import { validateRequest } from "@/lib/validate-request";
 import Link from "next/link";
 import { logout } from "./actions";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { SelectUrl } from "@/db/schema";
 import { getUrls } from "./dashboard/action";
 import UrlCard from "./urlCard";
 export default async function Home() {
@@ -13,7 +11,7 @@ export default async function Home() {
   // useEffect(() => {
   //   const fetchUrls = async () => {
   //     try {
-  //       const urls = await getUrls("i7fgwzytczbgovsg");
+  //       const urls = await getUrls("ixmnldnxh5tygizn");
   //       setUrls((prev) => urls ?? undefined);
   //     } catch (error) {
   //       console.error("Failed to get user email:", error);
@@ -25,7 +23,7 @@ export default async function Home() {
   //   fetchUrls();
   // }, []);
 
-  const urls = await getUrls("i7fgwzytczbgovsg");
+  const urls = await getUrls("ixmnldnxh5tygizn");
 
   const { user } = await validateRequest();
   return (

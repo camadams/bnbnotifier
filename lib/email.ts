@@ -20,7 +20,7 @@ export async function sendEmail({
     to: [
       process.env.NODE_ENV == "development"
         ? "camgadams@gmail.com"
-        : user.username,
+        : user.emailAddress,
     ],
     subject: "New Airbnb listing!",
     react: EmailTemplate({

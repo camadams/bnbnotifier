@@ -62,12 +62,12 @@ export default function MyForm({ user }: { user: User | null }) {
   return (
     <form action={handleSubmit}>
       <div className="flex">
-        <label htmlFor="username">URL</label>
+        <label htmlFor="airbnbUrl">URL</label>
         <input
           className="ml-2 rounded-lg ring-1"
           type="url"
           name="airbnbUrl"
-          id="username"
+          id="airbnbUrl"
         />
         <input hidden name="userId" defaultValue={user?.id} />
       </div>

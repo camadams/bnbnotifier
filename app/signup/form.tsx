@@ -7,20 +7,35 @@ export default function SignUpForm() {
   const [state, action] = useFormState(signUp, null);
   const status = useFormStatus();
   return (
-    <>
-      <h1>Create an account</h1>
-      {/* <form action={action}> */}
-      <form action={action}>
-        <label htmlFor="username">Username</label>
-        <input name="username" id="username" />
-        <br />
-        <label htmlFor="password">Password</label>
-        <input type="password" name="password" id="password" />
-        <br />
-        <SubmitButton />
-      </form>
-      <p className="bg-red-400 w-32">{state?.message}</p>
-    </>
+    <div className="flex mt-16 justify-center">
+      <div className="rounded-lg bg-slate-200 shadow-orange-100 shadow-2xl p-16 ">
+        <h1>Create an account</h1>
+        {/* <form action={action}> */}
+        <form action={action} className="space-y-6">
+          <label htmlFor="username">Username</label>
+          <input className="ml-2 rounded-lg" name="username" id="username" />
+          <br />
+          <label htmlFor="password">Password</label>
+          <input
+            className="ml-2 rounded-lg"
+            type="password"
+            name="password"
+            id="password"
+          />
+          <br />
+          <label htmlFor="emailAddress">Email Address</label>
+          <input
+            className="ml-2 rounded-lg"
+            type="email"
+            name="emailAddress"
+            id="emailAddress"
+          />
+          <br />
+          <SubmitButton />
+        </form>
+        <p className="bg-red-400 w-32">{state?.message}</p>
+      </div>
+    </div>
   );
 }
 
