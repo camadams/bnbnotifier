@@ -1,19 +1,15 @@
 "use client";
-import { useFormState, useFormStatus } from "react-dom";
-import Spinner from "../spinner";
-import { getUrls, scrapUrlAndAdd, getProduct } from "./action";
+import { getUrls, getProduct } from "./action";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import Navbar from "../navbar";
 import { validateRequest } from "@/lib/validate-request";
 import { User } from "lucia";
 import { redirect } from "next/navigation";
 import { Product } from "@lemonsqueezy/lemonsqueezy.js";
-import { format } from "date-fns";
 import { SelectUrl } from "@/db/schema";
 import MyForm from "./formForApi";
 import LoadingBlock from "./loadingBlock";
-import { formatTimeDifference } from "@/lib/dateUtil";
+import UrlCard, { AirbnbSearchParams } from "../urlCard";
 
 export default function Dashboard() {
   // const [state, action] = useFormState(scrapUrlAndAdd, null);
@@ -115,51 +111,9 @@ export default function Dashboard() {
         {!urlObjects ? (
           <LoadingBlock />
         ) : (
-          urlObjects?.map((urlObject, i) => {
-            const url = parseAirbnbSearchParams(urlObject.url);
-            return (
-              <div
-                key={i}
-                className="rounded-lg p-10 space-y-3 text-sx break-words  border-4 size-1/3 text-sm"
-              >
-                <div className="p-2 bg-slate-100 rounded-2xl">
-                  <div className="flex gap-2">
-                    <div>Start:</div>
-                    <div>{url.monthly_start_date}</div>
-                  </div>
-                  <div className="flex gap-2">
-                    <div>End:</div>
-                    <div>{url.monthly_end_date}</div>
-                  </div>
-                  <div className="flex gap-2">
-                    <div>Months:</div>
-                    <div>{url.monthly_length}</div>
-                  </div>
-                  <div className="flex gap-2">
-                    <div>Max Price:</div>
-                    <div>{url.price_max}</div>
-                  </div>
-                </div>
-                {urlObject.listingUrls && (
-                  <div className="p-2 bg-slate-100 rounded-2xl space-x-4">
-                    {urlObject.listingUrls.split(",").map((listingUrl, i) => (
-                      <Link
-                        target="_"
-                        className="text-blue-600 underline"
-                        key={i}
-                        href={listingUrl}
-                      >
-                        view listing{" "}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-                <div className="p-2 bg-slate-100 rounded-2xl space-x-4 text-xs">
-                  Last Scraped: {formatTimeDifference(urlObject.lastScraped)}
-                </div>
-              </div>
-            );
-          })
+          urlObjects?.map((urlObject, i) => (
+            <UrlCard key={i} urlObject={urlObject} />
+          ))
         )}
         <AddNewUrl />
       </div>
@@ -181,61 +135,9 @@ export default function Dashboard() {
           >
             Or click here to copy an example
           </button>
-          {/* <form action={action} className="space-y-6 flex flex-col">
-            <div className="flex">
-              <label htmlFor="username">URL</label>
-              <input
-                // onChange={(e) =>
-                //   setUrl(parseAirbnbSearchParams(e.target.value))
-                // }
-                className="ml-2 rounded-lg ring-1"
-                type="url"
-                name="airbnbUrl"
-                id="username"
-              />
-              <input hidden name="userId" defaultValue={user?.id} />
-            </div>
-            <SubmitButton />
-          </form> */}
           <MyForm user={user} />
         </div>
       );
     }
   }
-}
-
-function SubmitButton() {
-  const status = useFormStatus();
-  return (
-    <button className="ml-2 size-10 flex items-center justify-center bg-red-400 p-4 text-white rounded-full text-xs">
-      {status.pending ? <Spinner /> : "Save"}
-    </button>
-  );
-}
-
-type AirbnbSearchParams = {
-  monthly_start_date?: string;
-  monthly_length?: number;
-  monthly_end_date?: string;
-  price_max?: number;
-};
-
-function parseAirbnbSearchParams(queryString: string): AirbnbSearchParams {
-  const urlParams = new URLSearchParams(queryString);
-  const start = format(
-    new Date(urlParams.get("monthly_start_date") as string),
-    "d MMM yyyy"
-  );
-
-  const end = format(
-    new Date(urlParams.get("monthly_end_date") as string),
-    "d MMM yyyy"
-  );
-
-  return {
-    monthly_start_date: start,
-    monthly_length: parseInt(urlParams.get("monthly_length") as string, 10),
-    monthly_end_date: end,
-    price_max: parseInt(urlParams.get("price_max") as string, 10),
-  };
 }
