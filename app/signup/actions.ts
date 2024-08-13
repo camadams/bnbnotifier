@@ -62,14 +62,12 @@ export async function signUp(_: any, formData: FormData) {
 
   try {
     // TODO: check if username is already used
-    await db
-      .insert(userTable)
-      .values({
-        id: userId,
-        username: username,
-        password_hash: passwordHash,
-        emailAddress,
-      });
+    await db.insert(userTable).values({
+      id: userId,
+      username: username,
+      password_hash: passwordHash,
+      emailAddress: emailAddress,
+    });
   } catch (error) {
     return {
       message: (error as Error).message + " \n\n .Refresh and try again.",
