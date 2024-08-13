@@ -43,9 +43,7 @@ export default async function Home() {
 
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-16 p-8">
         <h1 className="text-bold text-4xl">BNBNotifier</h1>
-        {/* <h2 className="text-bold ">
-          Sign up or use demo credentials: demo123 for username and password
-        </h2> */}
+
         <div className="flex gap-4">
           {user ? (
             <>
@@ -75,7 +73,7 @@ export default async function Home() {
           )}
         </div>
         <div className="flex gap-2 text-sx justify-center items-center w-full h-20">
-          <UrlCard urlObject={urls[0]} />
+          {urls[0] && <UrlCard urlObject={urls[0]} />}
         </div>
       </div>
     </main>

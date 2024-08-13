@@ -22,15 +22,12 @@
 // export type InsertSession = typeof sessionTable.$inferInsert;
 // export type SelectSession = typeof sessionTable.$inferSelect;
 
-import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
-
 import pg from "pg";
 import {
   boolean,
   integer,
   jsonb,
   pgTable,
-  serial,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
@@ -45,6 +42,7 @@ export const userTable = pgTable("user", {
   username: text("username").notNull().unique(),
   password_hash: text("password_hash").notNull(),
   notifications_count: integer("notifications_count").notNull().default(0),
+  emailAddress: text("emailAddress").notNull().unique(),
 });
 
 export const sessionTable = pgTable("session", {
