@@ -165,7 +165,7 @@ export async function processWebhookEvent(webhookEvent: NewWebhookEvent) {
         await db
           .update(userTable)
           .set({
-            notifications_count: user.notifications_count + 10,
+            notifications_count: user.notifications_count + 3,
           })
           .where(eq(userTable.id, userIdFromWebhook));
 

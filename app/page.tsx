@@ -1,3 +1,4 @@
+"use server";
 import { validateRequest } from "@/lib/validate-request";
 import Link from "next/link";
 import { logout } from "./actions";
@@ -39,7 +40,7 @@ export default async function Home() {
 
       <div className="absolute inset-0 -z-1  bg-white/85"></div>
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-16 p-8">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-8">
         <h1 className="text-bold text-4xl">BNBNotifier</h1>
 
         <div className="flex gap-4">
@@ -70,7 +71,9 @@ export default async function Home() {
             </>
           )}
         </div>
-        <div className="flex gap-2 text-sx justify-center items-center w-full h-20">
+        <div>A search spanning the Deep South of Cape Town 👇</div>
+
+        <div className="flex justify-center items-center w-full ">
           {urls[0] && <UrlCard urlObject={urls[0]} />}
         </div>
       </div>

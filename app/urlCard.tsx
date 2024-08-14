@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function UrlCard({ urlObject }: { urlObject: SelectUrl }) {
   const url = parseAirbnbSearchParams(urlObject.url);
   return (
-    <div className="rounded-lg p-10 space-y-3 text-sx break-words  border-4 size-1/3 text-sm">
+    <div className="rounded-lg p-4 space-y-3 text-sx break-words border-4 lg:w-1/3 text-sm">
       <div className="p-2 bg-slate-100 rounded-2xl">
         <div className="flex gap-2">
           <div>Start:</div>
