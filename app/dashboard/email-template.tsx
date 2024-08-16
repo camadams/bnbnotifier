@@ -38,12 +38,19 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
   </div>
 );
 
+function getRoomId(url: string): string | null {
+  const match = url.match(/\/rooms\/(\d+)/);
+  return match ? match[1] : null;
+}
+
 function getDifference(
   newScrapedUrlsArr: string[],
   oldScrapedUrlsArr: string[]
 ) {
-  const oldScrapedUrlsSet = new Set(oldScrapedUrlsArr);
-  return newScrapedUrlsArr.filter((url) => !oldScrapedUrlsSet.has(url));
+  const oldScrapedIdsSet = new Set(oldScrapedUrlsArr.map(getRoomId));
+  return newScrapedUrlsArr.filter((url) => {
+    const roomId = getRoomId(url);
+    return roomId && !oldScrapedIdsSet.has(roomId);
+  });
 }
-
 export default EmailTemplate;

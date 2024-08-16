@@ -88,9 +88,8 @@ export default function Dashboard() {
 
         <a
           target="_"
-          className={`mt-8 ${
-            product ? "bg-red-400 " : "bg-red-100 pointer-events-none"
-          }  px-3 py-1 rounded-full hover:bg-red-500`}
+          className={`mt-8 px-3 py-1 rounded-full hover:bg-red-500 
+            ${product ? "bg-red-400 " : "bg-red-100 pointer-events-none"} `}
           href={
             product
               ? `${product.data.attributes.buy_now_url}?checkout[custom][userId]=${user.id}`
@@ -107,7 +106,7 @@ export default function Dashboard() {
 
   function Urls() {
     return (
-      <div className="flex gap-2 text-sx">
+      <div className="flex md:flex-row flex-col gap-2 text-sx">
         {!urlObjects ? (
           <LoadingBlock />
         ) : (
@@ -120,7 +119,7 @@ export default function Dashboard() {
     );
     function AddNewUrl() {
       return (
-        <div className="rounded-lg p-10 space-y-4 border-dotted border-4 size-1/3 text-sm">
+        <div className="rounded-lg p-10 space-y-4 border-dotted border-4 size-1/3 text-sm lg:w-1/3 w-full">
           <h1>
             Enter the URL from Airbnbs website after you have searched for
             listings

@@ -199,7 +199,12 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     const oldScrapedUrls = oldUrlObject.listingUrls;
     const oldScrapedUrlsArr = oldScrapedUrls.split(",");
 
+    console.log({ "newScrapedUrlsArr.length": newScrapedUrlsArr.length });
+    console.log({ "oldScrapedUrlsArr.length": oldScrapedUrlsArr.length });
+
+    //check diff
     if (newScrapedUrlsArr.length > oldScrapedUrlsArr.length) {
+      // email user
       const selectUserResult = await db
         .select()
         .from(userTable)
@@ -221,6 +226,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         return { error };
       }
 
+      // deduce notifications credits
       var notifCount = selectUserResult[0].notifications_count;
       if (notifCount < 1) {
         return {
@@ -235,13 +241,19 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
           notifications_count: notifCount--,
         })
         .where(eq(userTable.id, userId));
+      // done
     }
+
     await db
       .update(urlTable)
       .set({
         listingUrls: newScrapedUrlsArr.join(","),
         processed: true,
         lastScraped: new Date(),
+        lastDifference:
+          newScrapedUrlsArr.length != oldScrapedUrls.length
+            ? new Date()
+            : urlBean?.lastDifference ?? null,
       })
       .where(eq(urlTable.url, urlBean?.url ?? newUrl));
   }

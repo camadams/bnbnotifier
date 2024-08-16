@@ -10,8 +10,8 @@ export async function sendEmail({
 }: {
   user: User;
   airbnbSearchUrl: string;
-  newScrapedUrlsArr: string[];
   oldScrapedUrlsArr: string[];
+  newScrapedUrlsArr: string[];
 }) {
   const resend = new Resend(process.env.RESEND_API_KEY);
 

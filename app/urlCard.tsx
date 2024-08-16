@@ -6,8 +6,18 @@ import Link from "next/link";
 export default function UrlCard({ urlObject }: { urlObject: SelectUrl }) {
   const url = parseAirbnbSearchParams(urlObject.url);
   return (
-    <div className="rounded-lg p-4 space-y-3 text-sx break-words border-4 lg:w-1/3 text-sm">
-      <div className="p-2 bg-slate-100 rounded-2xl">
+    <div className="rounded-lg p-4 space-y-3 text-sx break-words border-4 lg:w-1/3 w-full text-sm">
+      <div className="p-1 bg-slate-100 rounded-2xl">
+        <div className="flex gap-2">
+          <div className="shrink-0">Airbnb URL:</div>
+          <a
+            href={urlObject.url}
+            className="truncate underline text-blue-600"
+            target="_"
+          >
+            {urlObject.url}
+          </a>
+        </div>
         <div className="flex gap-2">
           <div>Start:</div>
           <div>{url.monthly_start_date}</div>
@@ -26,7 +36,7 @@ export default function UrlCard({ urlObject }: { urlObject: SelectUrl }) {
         </div>
       </div>
       {urlObject.listingUrls && (
-        <div className="p-2 bg-slate-100 rounded-2xl space-x-4">
+        <div className="p-1 bg-slate-100 rounded-2xl space-x-4">
           {urlObject.listingUrls.split(",").map((listingUrl, i) => (
             <Link
               target="_"
@@ -39,9 +49,20 @@ export default function UrlCard({ urlObject }: { urlObject: SelectUrl }) {
           ))}
         </div>
       )}
-      <div className="p-2 bg-slate-100 rounded-2xl space-x-4 text-xs">
+      <div className="p-1 bg-slate-100 rounded-2xl space-x-4 text-xs">
         Last Scraped: {formatTimeDifference(urlObject.lastScraped)}
       </div>
+
+      {urlObject.lastDifference ? (
+        <div className="p-1 bg-slate-100 rounded-2xl space-x-4 text-xs">
+          Last Difference in viewings:{" "}
+          {formatTimeDifference(urlObject.lastDifference)}
+        </div>
+      ) : (
+        <div className="p-1 bg-slate-100 rounded-2xl space-x-4 text-xs">
+          No difference in listings since created
+        </div>
+      )}
     </div>
   );
 }

@@ -33,7 +33,11 @@ export default function Page() {
 function SubmitButton() {
   const status = useFormStatus();
   return (
-    <button className="ml-2  bg-red-600 text-white rounded-full p-3">
+    <button
+      className={`ml-2  bg-red-600 text-white rounded-full p-3 ${
+        status.pending ? "pointer-events-none bg-red-300" : "bg-red-600"
+      }`}
+    >
       {status.pending ? <Spinner /> : <Arrow />}
     </button>
   );
