@@ -205,17 +205,10 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     if (newScrapedUrlsArr.length > oldScrapedUrlsArr.length) {
       console.log({ here209: "there was a diff" });
 
-      const urlBean = await db
-        .select()
-        .from(urlTable)
-        .where(eq(urlTable.url, airbnbSearchUrl));
-
-      const urlOb: SelectUrl = urlBean[0];
-
       const selectUserResult = await db
         .select()
         .from(userTable)
-        .where(eq(userTable.id, urlOb.userId));
+        .where(eq(userTable.id, userId));
 
       const user: User = selectUserResult[0];
       if (!user) {
@@ -291,11 +284,18 @@ export async function scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain() {
     });
 
     if (oldestUnprocessedUrl) {
+      
+      // const urlBeanResult = await db
+      //   .select()
+      //   .from(urlTable)
+      //   .where(eq(urlTable.url, oldestUnprocessedUrl.userId));
+
+      // const urlBean: SelectUrl = urlBeanResult[0];
       const results =
         await scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
           oldestUnprocessedUrl,
           "",
-          ""
+          oldestUnprocessedUrl.userId
         );
       return {
         msg: `Processed url: ${oldestUnprocessedUrl.url}. Failure message: ${results.error}. Result message: ${results.res}`,
