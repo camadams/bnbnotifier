@@ -213,7 +213,9 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
 
       const user: User = selectUserResult[0];
       if (!user) {
-        return { error: `Could not find user with userId: ${userId}` };
+        const errMess = `Could not find user with userId: ${userId}`;
+        console.log({ errMess });
+        return { error: errMess };
       }
       console.log({ here218: "sending email" });
 
