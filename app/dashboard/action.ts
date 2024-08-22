@@ -247,11 +247,12 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         };
       }
       notifCount = notifCount - 1;
+      console.log({ here250: notifCount });
       console.log({ here241: "updating user table" });
       await db
         .update(userTable)
         .set({
-          notifications_count: notifCount--,
+          notifications_count: notifCount,
         })
         .where(eq(userTable.id, userId));
       // done
