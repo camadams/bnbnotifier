@@ -148,6 +148,8 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         .filter((href) => href.includes("/rooms/"));
       return Array.from(new Set(hrefs)); // Remove duplicate links
     });
+
+    // if(roomLinks.length==0)
     if (urlBean) {
       checkIfDiffEmailUpdateDeductNotiCreditsUpdateUrlAsProcessed(
         roomLinks,
@@ -199,11 +201,10 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     const oldScrapedUrls = oldUrlObject.listingUrls;
     const oldScrapedUrlsArr = oldScrapedUrls.split(",");
 
-    console.log({ "newScrapedUrlsArr.length": newScrapedUrlsArr.length });
-    console.log({ "oldScrapedUrlsArr.length": oldScrapedUrlsArr.length });
-
     //check diff
     if (newScrapedUrlsArr.length > oldScrapedUrlsArr.length) {
+      console.log({ here209: "there was a diff" });
+
       // email user
       const selectUserResult = await db
         .select()
@@ -214,6 +215,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
       if (!user) {
         return { error: `Could not find user with userId: ${userId}` };
       }
+      console.log({ here218: "sending email" });
 
       const { data, error } = await sendEmail({
         user,
@@ -221,13 +223,14 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         oldScrapedUrlsArr,
         newScrapedUrlsArr,
       });
-
+      console.log({ here226: "email sent", result: data, error: error });
       if (error) {
         return { error };
       }
 
       // deduce notifications credits
       var notifCount = selectUserResult[0].notifications_count;
+      console.log({ here233: "deducting credits" });
       if (notifCount < 1) {
         return {
           error:
@@ -235,6 +238,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         };
       }
       notifCount = notifCount - 1;
+      console.log({ here241: "updating user table" });
       await db
         .update(userTable)
         .set({
@@ -243,17 +247,18 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         .where(eq(userTable.id, userId));
       // done
     }
-
+    console.log({ here250: "updating url table" });
+    const lastDifference =
+      newScrapedUrlsArr.length != oldScrapedUrls.length
+        ? new Date()
+        : urlBean?.lastDifference ?? null;
     await db
       .update(urlTable)
       .set({
         listingUrls: newScrapedUrlsArr.join(","),
         processed: true,
         lastScraped: new Date(),
-        lastDifference:
-          newScrapedUrlsArr.length != oldScrapedUrls.length
-            ? new Date()
-            : urlBean?.lastDifference ?? null,
+        lastDifference,
       })
       .where(eq(urlTable.url, urlBean?.url ?? newUrl));
   }

@@ -19,7 +19,8 @@ export async function signUp(_: any, formData: FormData) {
     !/^[a-z0-9_-]+$/.test(username)
   ) {
     return {
-      message: "Invalid username. Please enter 4 or more characters",
+      message:
+        "Invalid username. username must be between 4 ~ 31 characters, and only consists of lowercase letters, 0-9, -, and _",
     };
   }
   const password = formData.get("password");
