@@ -18,7 +18,7 @@ export default function UrlCard({ urlObject }: { urlObject: SelectUrl }) {
             {urlObject.url}
           </a>
         </div>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <div>Start:</div>
           <div>{url.monthly_start_date}</div>
         </div>
@@ -33,7 +33,7 @@ export default function UrlCard({ urlObject }: { urlObject: SelectUrl }) {
         <div className="flex gap-2">
           <div>Max Price:</div>
           <div>{url.price_max}</div>
-        </div>
+        </div> */}
       </div>
       {urlObject.listingUrls && (
         <div className="p-1 bg-slate-100 rounded-2xl space-x-4">
