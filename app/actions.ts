@@ -5,7 +5,12 @@ import { lucia } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { validateRequest } from "@/lib/validate-request";
-import { NewWebhookEvent, userTable, webhookEvents } from "@/db/schema";
+import {
+  NewWebhookEvent,
+  urlTable,
+  userTable,
+  webhookEvents,
+} from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { webhookHasData, webhookHasMeta } from "@/lib/typeguard";
@@ -168,6 +173,13 @@ export async function processWebhookEvent(webhookEvent: NewWebhookEvent) {
             notifications_count: user.notifications_count + 3,
           })
           .where(eq(userTable.id, userIdFromWebhook));
+
+        await db
+          .update(urlTable)
+          .set({
+            paused: false,
+          })
+          .where(eq(urlTable.userId, userIdFromWebhook));
 
         // await db.execute(
         //   sql`UPDATE user SET notifications_count = notifications_count + ${10} WHERE user_id = '${userIdFromWebhook}'`

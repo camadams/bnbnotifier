@@ -68,11 +68,11 @@ export const urlTable = pgTable("url", {
     mode: "date",
   }).notNull(),
   processed: boolean("processed").default(true),
-  // paused: boolean("processed").default(false),
   lastDifference: timestamp("lastDifference", {
     withTimezone: true,
     mode: "date",
   }),
+  paused: boolean("paused").default(false)
 });
 
 export const webhookEvents = pgTable("webhookEvent", {

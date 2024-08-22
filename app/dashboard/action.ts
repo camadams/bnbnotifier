@@ -5,7 +5,7 @@ import { Product } from "@lemonsqueezy/lemonsqueezy.js";
 import { db } from "@/db";
 import { SelectUrl, urlTable, userTable } from "@/db/schema";
 import { revalidatePath } from "next/cache";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 
 import chromium from "@sparticuz/chromium";
 import { Resend } from "resend";
@@ -151,6 +151,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
 
     // if(roomLinks.length==0)
     if (urlBean) {
+      var isNotifCountZero = false;
       checkIfDiffEmailUpdateDeductNotiCreditsUpdateUrlAsProcessed(
         roomLinks,
         urlBean,
@@ -240,6 +241,11 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         };
       }
       notifCount = notifCount - 1;
+
+      
+      if (notifCount === 0) {
+        isNotifCountZero = true;
+      }
       console.log({ here250: notifCount });
       console.log({ here241: "updating user table" });
       await db
@@ -264,6 +270,10 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         lastDifference,
       })
       .where(eq(urlTable.url, urlBean?.url ?? newUrl));
+      
+      if (isNotifCountZero) {
+        await db.update(urlTable).set({ paused: true }).where(eq(urlTable.userId, userId));
+      }
   }
 }
 
@@ -279,12 +289,11 @@ export async function scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain() {
 
   async function processUrl() {
     const oldestUnprocessedUrl = await db.query.urlTable.findFirst({
-      where: eq(urlTable.processed, false),
+      where: and(eq(urlTable.processed, false), eq(urlTable.paused, false)),
       orderBy: [asc(urlTable.lastScraped)],
     });
 
     if (oldestUnprocessedUrl) {
-      
       // const urlBeanResult = await db
       //   .select()
       //   .from(urlTable)
