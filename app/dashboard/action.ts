@@ -205,11 +205,17 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     if (newScrapedUrlsArr.length > oldScrapedUrlsArr.length) {
       console.log({ here209: "there was a diff" });
 
-      // email user
+      const urlBean = await db
+        .select()
+        .from(urlTable)
+        .where(eq(urlTable.url, airbnbSearchUrl));
+
+      const urlOb: SelectUrl = urlBean[0];
+
       const selectUserResult = await db
         .select()
         .from(userTable)
-        .where(eq(userTable.id, userId));
+        .where(eq(userTable.id, urlOb.userId));
 
       const user: User = selectUserResult[0];
       if (!user) {
@@ -217,6 +223,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         console.log({ errMess });
         return { error: errMess };
       }
+
       console.log({ here218: "sending email" });
 
       const { data, error } = await sendEmail({
