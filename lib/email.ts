@@ -16,7 +16,7 @@ export async function sendEmail({
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   const { data, error } = await resend.emails.send({
-    from: "Acme <onboarding@resend.dev>",
+    from: "BNBNotifier <bnbnotifier@mail.camthehuman.com>",
     to: [
       process.env.NODE_ENV == "development"
         ? "camgadams@gmail.com"

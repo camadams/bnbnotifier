@@ -204,8 +204,6 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
 
     //check diff
     if (newScrapedUrlsArr.length > oldScrapedUrlsArr.length) {
-      console.log({ here209: "there was a diff" });
-
       const selectUserResult = await db
         .select()
         .from(userTable)
@@ -217,23 +215,17 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         console.log({ errMess });
         return { error: errMess };
       }
-
-      console.log({ here218: "sending email" });
-
       const { data, error } = await sendEmail({
         user,
         airbnbSearchUrl,
         oldScrapedUrlsArr,
         newScrapedUrlsArr,
       });
-      console.log({ here226: "email sent", result: data, error: error });
       if (error) {
         return { error };
       }
-
       // deduce notifications credits
       var notifCount = selectUserResult[0].notifications_count;
-      console.log({ here233: "deducting credits" });
       if (notifCount < 1) {
         return {
           error:
@@ -246,8 +238,6 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
       if (notifCount === 0) {
         isNotifCountZero = true;
       }
-      console.log({ here250: notifCount });
-      console.log({ here241: "updating user table" });
       await db
         .update(userTable)
         .set({
@@ -256,7 +246,6 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         .where(eq(userTable.id, userId));
       // done
     }
-    console.log({ here250: "updating url table" });
     const lastDifference =
       newScrapedUrlsArr.length != oldScrapedUrls.length
         ? new Date()
