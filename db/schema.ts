@@ -72,7 +72,8 @@ export const urlTable = pgTable("url", {
     withTimezone: true,
     mode: "date",
   }),
-  paused: boolean("paused").default(false)
+  paused: boolean("paused").default(false),
+  errorMessage: text("errorMessage"),
 });
 
 export const webhookEvents = pgTable("webhookEvent", {

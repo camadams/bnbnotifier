@@ -131,6 +131,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
   newUrl: string,
   userId: string
 ) {
+  var errorMessge = "";
   if (process.env.NODE_ENV == "development") {
     userId = "ixmnldnxh5tygizn";
   }
@@ -168,15 +169,18 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     }
     return { res: "all good" };
   } catch (error) {
-    console.log("Error scraping Airbnb URL:", error);
-    return {
-      error: `Failed to scrape the Airbnb URL. Error message: ${
-        (error as Error).message
-      }`,
-    };
+    errorMessge = (error as Error).message;
+    console.log(errorMessge);
+    return { error: errorMessge };
   } finally {
     if (browser) {
       await browser.close();
+    }
+    if (errorMessge) {
+      await db
+        .update(urlTable)
+        .set({ errorMessage: errorMessge })
+        .where(eq(urlTable.url, urlBean?.url ?? newUrl));
     }
   }
 
@@ -211,9 +215,9 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
 
       const user: User = selectUserResult[0];
       if (!user) {
-        const errMess = `Could not find user with userId: ${userId}`;
-        console.log({ errMess });
-        return { error: errMess };
+        errorMessge += `Could not find user with userId: ${userId}`;
+        console.log({ errorMessge });
+        return { error: errorMessge };
       }
       const { data, error } = await sendEmail({
         user,
@@ -222,19 +226,27 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         newScrapedUrlsArr,
       });
       if (error) {
-        return { error };
+        errorMessge += `Error sending email: ${error}`;
+        await db
+          .update(urlTable)
+          .set({ errorMessage: errorMessge })
+          .where(eq(urlTable.url, urlBean?.url ?? newUrl));
+        return { error: errorMessge };
       }
       // deduce notifications credits
       var notifCount = selectUserResult[0].notifications_count;
       if (notifCount < 1) {
+        errorMessge += `Scraped a url for a user with less than 1 notification count.`;
+        await db
+          .update(urlTable)
+          .set({ errorMessage: errorMessge })
+          .where(eq(urlTable.url, urlBean?.url ?? newUrl));
         return {
-          error:
-            "Scraped a url for a user with less than 1 notification count. Logic be in place to only scrape urls from users with 1 or more notification count",
+          error: errorMessge,
         };
       }
       notifCount = notifCount - 1;
 
-      
       if (notifCount === 0) {
         isNotifCountZero = true;
       }
@@ -244,8 +256,8 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
           notifications_count: notifCount,
         })
         .where(eq(userTable.id, userId));
-      // done
     }
+    // done
     const lastDifference =
       newScrapedUrlsArr.length != oldScrapedUrls.length
         ? new Date()
@@ -259,46 +271,37 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         lastDifference,
       })
       .where(eq(urlTable.url, urlBean?.url ?? newUrl));
-      
-      if (isNotifCountZero) {
-        await db.update(urlTable).set({ paused: true }).where(eq(urlTable.userId, userId));
-      }
+
+    if (isNotifCountZero) {
+      await db
+        .update(urlTable)
+        .set({ paused: true })
+        .where(eq(urlTable.userId, userId));
+    }
   }
 }
 
 export async function scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain() {
-  const result = await processUrl();
-  if (result === undefined) {
-    await db.update(urlTable).set({ processed: false });
-    const resultt = await processUrl();
-    return { ...resultt };
-  } else {
-    return { ...result };
-  }
+  var oldestUnprocessedUrl = await db.query.urlTable.findFirst({
+    where: and(eq(urlTable.processed, false), eq(urlTable.paused, false)),
+    orderBy: [asc(urlTable.lastScraped)],
+  });
 
-  async function processUrl() {
-    const oldestUnprocessedUrl = await db.query.urlTable.findFirst({
+  if (!oldestUnprocessedUrl) {
+    await db.update(urlTable).set({ processed: false });
+    oldestUnprocessedUrl = await db.query.urlTable.findFirst({
       where: and(eq(urlTable.processed, false), eq(urlTable.paused, false)),
       orderBy: [asc(urlTable.lastScraped)],
     });
-
-    if (oldestUnprocessedUrl) {
-      // const urlBeanResult = await db
-      //   .select()
-      //   .from(urlTable)
-      //   .where(eq(urlTable.url, oldestUnprocessedUrl.userId));
-
-      // const urlBean: SelectUrl = urlBeanResult[0];
-      const results =
-        await scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
-          oldestUnprocessedUrl,
-          "",
-          oldestUnprocessedUrl.userId
-        );
-      return {
-        msg: `Processed url: ${oldestUnprocessedUrl.url}. Failure message: ${results.error}. Result message: ${results.res}`,
-      };
-    }
-    return;
   }
+  if (!oldestUnprocessedUrl) {
+    console.log("No oldest unprocessed url found");
+    return { error: "No oldest unprocessed url found" };
+  }
+
+  await scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
+    oldestUnprocessedUrl,
+    "",
+    oldestUnprocessedUrl.userId
+  );
 }
