@@ -14,6 +14,7 @@ import {
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { webhookHasData, webhookHasMeta } from "@/lib/typeguard";
+import { Resend } from "resend";
 
 // export default async function Page() {
 //   return (
@@ -195,4 +196,17 @@ export async function processWebhookEvent(webhookEvent: NewWebhookEvent) {
       })
       .where(eq(webhookEvents.id, webhookEvent.id));
   }
+}
+
+
+export async function sendErrorEmail(errorMessage: string) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+ await resend.emails.send({
+    from: "BNBNotifier <bnbnotifier@mail.camthehuman.com>",
+    to: "camgadams@gmail.com",
+    subject: "Error in BNBNotifier",
+    text: errorMessage,
+  });
+  return;
 }

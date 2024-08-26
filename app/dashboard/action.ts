@@ -12,6 +12,7 @@ import { Resend } from "resend";
 import EmailTemplate from "./email-template";
 import { User } from "lucia";
 import { sendEmail } from "@/lib/email";
+import { sendErrorEmail } from "../actions";
 // export const maxDuration = 50;
 // export const dynamic = "force-dynamic";
 const test = true;
@@ -182,6 +183,9 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         .set({ errorMessage: errorMessge })
         .where(eq(urlTable.url, urlBean?.url ?? newUrl));
     }
+    if (errorMessge !== "") {
+      await sendErrorEmail(errorMessge);
+    }
   }
 
   async function getLaunchConfig() {
@@ -279,6 +283,8 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         .where(eq(urlTable.userId, userId));
     }
   }
+
+
 }
 
 export async function scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain() {

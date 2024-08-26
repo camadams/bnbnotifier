@@ -13,30 +13,35 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
   airbnbSearchUrl,
   oldScrapedUrlsArr,
   newScrapedUrlsArr,
-}) => (
-  <div>
-    <p>
-      Hi {user.username} !
-      <br />
-      <br />
-      You have an new listing for an area you searched: {airbnbSearchUrl}
-      <br />
-      <br />
-      {getDifference(newScrapedUrlsArr, oldScrapedUrlsArr).map((url, i) => (
-        <div key={i}>
-          <a href={url} target="_">
-            View listing
-          </a>
-          <br />
-        </div>
-      ))}
-      <br />
-      Kind regards,
-      <br />
-      Cam The Human
-    </p>
-  </div>
-);
+}) => {
+  const newListings = getDifference(newScrapedUrlsArr, oldScrapedUrlsArr);
+  const newListingsCount = newListings.length;
+
+  return (
+    <div>
+      <p>
+        Hi {user.username}!
+        <br />
+        <br />
+        You have {newListingsCount} new listing{newListingsCount !== 1 ? 's' : ''} for <a href={airbnbSearchUrl} target="_">an area you searched</a>
+        <br />
+        <br />
+        {newListings.map((url, i) => (
+          <div key={i}>
+            <a href={url} target="_">
+              View listing
+            </a>
+            <br />
+          </div>
+        ))}
+        <br />
+        Kind regards,
+        <br />
+        Cam The Human
+      </p>
+    </div>
+  );
+};
 
 function getRoomId(url: string): string | null {
   const match = url.match(/\/rooms\/(\d+)/);
