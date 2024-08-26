@@ -128,7 +128,7 @@ export async function scrapUrlAndAdd(_: any, formData: FormData) {
 //   }
 // }
 export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
-  urlBean: SelectUrl | null,
+  oldUrlObject: SelectUrl | null,
   newUrl: string,
   userId: string
 ) {
@@ -142,8 +142,8 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     browser = await puppeteer.launch(launchConfig);
     let page = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
-    await page.goto(urlBean?.url ?? newUrl, { waitUntil: "networkidle0" });
-    const roomLinks = await page.evaluate(() => {
+    await page.goto(oldUrlObject?.url ?? newUrl, { waitUntil: "networkidle0" });
+    const newScrapedUrlsArr = await page.evaluate(() => {
       const anchorTags = document.querySelectorAll("a");
       const hrefs = Array.from(anchorTags)
         .map((anchor) => anchor.href)
@@ -151,24 +151,24 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
       return Array.from(new Set(hrefs)); // Remove duplicate links
     });
 
-    // if(roomLinks.length==0)
-    if (urlBean) {
+    if (newScrapedUrlsArr.length == 0) {
+      errorMessge += "Error scraping url. No new listings found.";
+    } else if (oldUrlObject) {
       var isNotifCountZero = false;
       checkIfDiffEmailUpdateDeductNotiCreditsUpdateUrlAsProcessed(
-        roomLinks,
-        urlBean,
+        newScrapedUrlsArr,
+        oldUrlObject,
         userId,
-        urlBean.url
+        oldUrlObject.url
       );
     } else {
       await db.insert(urlTable).values({
         userId,
         url: newUrl,
-        listingUrls: roomLinks.join(","),
+        listingUrls: newScrapedUrlsArr.join(","),
         lastScraped: new Date(),
       });
     }
-    return { res: "all good" };
   } catch (error) {
     errorMessge = (error as Error).message;
     console.log(errorMessge);
@@ -181,11 +181,12 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
       await db
         .update(urlTable)
         .set({ errorMessage: errorMessge })
-        .where(eq(urlTable.url, urlBean?.url ?? newUrl));
+        .where(eq(urlTable.url, oldUrlObject?.url ?? newUrl));
     }
     if (errorMessge !== "") {
       await sendErrorEmail(errorMessge);
     }
+    return { res: "done", error: errorMessge };
   }
 
   async function getLaunchConfig() {
@@ -234,7 +235,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         await db
           .update(urlTable)
           .set({ errorMessage: errorMessge })
-          .where(eq(urlTable.url, urlBean?.url ?? newUrl));
+          .where(eq(urlTable.url, oldUrlObject?.url ?? newUrl));
         return { error: errorMessge };
       }
       // deduce notifications credits
@@ -244,7 +245,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         await db
           .update(urlTable)
           .set({ errorMessage: errorMessge })
-          .where(eq(urlTable.url, urlBean?.url ?? newUrl));
+          .where(eq(urlTable.url, oldUrlObject?.url ?? newUrl));
         return {
           error: errorMessge,
         };
@@ -265,7 +266,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     const lastDifference =
       newScrapedUrlsArr.length != oldScrapedUrls.length
         ? new Date()
-        : urlBean?.lastDifference ?? null;
+        : oldUrlObject?.lastDifference ?? null;
     await db
       .update(urlTable)
       .set({
@@ -274,7 +275,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         lastScraped: new Date(),
         lastDifference,
       })
-      .where(eq(urlTable.url, urlBean?.url ?? newUrl));
+      .where(eq(urlTable.url, oldUrlObject?.url ?? newUrl));
 
     if (isNotifCountZero) {
       await db
@@ -283,8 +284,6 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
         .where(eq(urlTable.userId, userId));
     }
   }
-
-
 }
 
 export async function scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain() {
