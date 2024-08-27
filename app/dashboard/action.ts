@@ -8,8 +8,6 @@ import { revalidatePath } from "next/cache";
 import { and, asc, eq } from "drizzle-orm";
 
 import chromium from "@sparticuz/chromium";
-import { Resend } from "resend";
-import EmailTemplate from "./email-template";
 import { User } from "lucia";
 import { sendEmail } from "@/lib/email";
 import { sendErrorEmail } from "../actions";
