@@ -11,18 +11,6 @@ import chromium from "@sparticuz/chromium";
 import { User } from "lucia";
 import { sendEmail } from "@/lib/email";
 import { sendErrorEmail } from "../actions";
-// export const maxDuration = 50;
-// export const dynamic = "force-dynamic";
-const test = true;
-type prodScrapType =
-  | {
-      res: string;
-      error?: undefined;
-    }
-  | {
-      error: string;
-      res?: undefined;
-    };
 
 export async function getProduct() {
   const endpoint = "https://api.lemonsqueezy.com/v1/products";
@@ -70,61 +58,7 @@ export async function scrapUrlAndAdd(_: any, formData: FormData) {
     console.log(error);
     return { isOk: false, msg: errorMessage };
   }
-
-  // let browser;
-  // try {
-  //   browser = await puppeteer.launch();
-  //   const page = await browser.newPage();
-  //   page.setDefaultNavigationTimeout(0);
-
-  //   await page.goto(airbnbUrl, { waitUntil: "networkidle2" });
-
-  //   const roomLinks = await page.evaluate(() => {
-  //     const anchorTags = document.querySelectorAll("a");
-  //     const hrefs = Array.from(anchorTags)
-  //       .map((anchor) => anchor.href)
-  //       .filter((href) => href.includes("/rooms/"));
-  //     return Array.from(new Set(hrefs)); // Remove duplicate links
-  //   });
-
-  //   return { res: roomLinks };
-  // } catch (error) {
-  //   console.error("Error scraping Airbnb URL:", error);
-  //   return { error: "Failed to scrape the Airbnb URL" };
-  // } finally {
-  //   if (browser) {
-  //     await browser.close();
-  //   }
-  // }
 }
-
-// async function scrap(airbnbUrl: string) {
-//   let browser;
-//   try {
-//     browser = await puppeteer.launch();
-//     const page = await browser.newPage();
-//     page.setDefaultNavigationTimeout(0);
-
-//     await page.goto(airbnbUrl, { waitUntil: "networkidle2" });
-
-//     const roomLinks = await page.evaluate(() => {
-//       const anchorTags = document.querySelectorAll("a");
-//       const hrefs = Array.from(anchorTags)
-//         .map((anchor) => anchor.href)
-//         .filter((href) => href.includes("/rooms/"));
-//       return Array.from(new Set(hrefs)); // Remove duplicate links
-//     });
-
-//     return { res: roomLinks.join(",") };
-//   } catch (error) {
-//     console.error("Error scraping Airbnb URL:", error);
-//     return { error: "Failed to scrape the Airbnb URL" };
-//   } finally {
-//     if (browser) {
-//       await browser.close();
-//     }
-//   }
-// }
 export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
   oldUrlObject: SelectUrl | null,
   newUrl: string,
@@ -149,9 +83,10 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
       return Array.from(new Set(hrefs)); // Remove duplicate links
     });
 
-    if (newScrapedUrlsArr.length == 0) {
-      errorMessge += "Error scraping url. No new listings found.";
-    } else if (oldUrlObject) {
+    // if (newScrapedUrlsArr.length == 0) {
+    //   errorMessge += "Error scraping url. No new listings found.";
+    // } else
+    if (oldUrlObject) {
       var isNotifCountZero = false;
       checkIfDiffEmailUpdateDeductNotiCreditsUpdateUrlAsProcessed(
         newScrapedUrlsArr,
