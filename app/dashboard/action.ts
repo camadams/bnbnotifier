@@ -170,7 +170,6 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
   } catch (error) {
     errorMessge = (error as Error).message;
     console.log(errorMessge);
-    return { error: errorMessge };
   } finally {
     if (browser) {
       await browser.close();
