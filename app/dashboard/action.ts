@@ -83,10 +83,9 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
       return Array.from(new Set(hrefs)); // Remove duplicate links
     });
 
-    // if (newScrapedUrlsArr.length == 0) {
-    //   errorMessge += "Error scraping url. No new listings found.";
-    // } else
-    if (oldUrlObject) {
+    if (newScrapedUrlsArr.length == 0) {
+      errorMessge += "Error scraping url. No new listings found.";
+    } else if (oldUrlObject) {
       var isNotifCountZero = false;
       checkIfDiffEmailUpdateDeductNotiCreditsUpdateUrlAsProcessed(
         newScrapedUrlsArr,
@@ -169,6 +168,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
           .set({ errorMessage: errorMessge })
           .where(eq(urlTable.url, oldUrlObject?.url ?? newUrl));
         return { error: errorMessge };
+        ``;
       }
       // deduce notifications credits
       var notifCount = selectUserResult[0].notifications_count;
@@ -219,26 +219,26 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
 }
 
 export async function scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain() {
-  var oldestUnprocessedUrl = await db.query.urlTable.findFirst({
+  var oldestActiveUnprocessedUrl = await db.query.urlTable.findFirst({
     where: and(eq(urlTable.processed, false), eq(urlTable.paused, false)),
     orderBy: [asc(urlTable.lastScraped)],
   });
 
-  if (!oldestUnprocessedUrl) {
+  if (!oldestActiveUnprocessedUrl) {
     await db.update(urlTable).set({ processed: false });
-    oldestUnprocessedUrl = await db.query.urlTable.findFirst({
+    oldestActiveUnprocessedUrl = await db.query.urlTable.findFirst({
       where: and(eq(urlTable.processed, false), eq(urlTable.paused, false)),
       orderBy: [asc(urlTable.lastScraped)],
     });
   }
-  if (!oldestUnprocessedUrl) {
-    console.log("No oldest unprocessed url found");
+  if (!oldestActiveUnprocessedUrl) {
+    // console.log("No oldest unprocessed url found");
     return { error: "No oldest unprocessed url found" };
   }
 
   await scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
-    oldestUnprocessedUrl,
+    oldestActiveUnprocessedUrl,
     "",
-    oldestUnprocessedUrl.userId
+    oldestActiveUnprocessedUrl.userId
   );
 }
