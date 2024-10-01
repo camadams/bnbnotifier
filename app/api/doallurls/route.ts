@@ -10,9 +10,9 @@ export async function GET(request: Request) {
   if (process.env.NODE_ENV == "production") {
     apisecret = (apisecret && apisecret.split(" ")[1]) || ""; // Assuming 'Bearer <token>' format
   }
-  if (apisecret !== process.env.API_SECRET) {
-    return NextResponse.json("invalid", { status: 403 });
-  }
+  // if (apisecret !== process.env.API_SECRET) {
+  //   return NextResponse.json("invalid", { status: 403 });
+  // }
   await scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain();
   return NextResponse.json("done", { status: 200 });
 }

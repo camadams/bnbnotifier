@@ -111,7 +111,7 @@ export async function scrapExistingUrlCheckDiffEmailUpdateOrAddNewUrlAndScrap(
     if (errorMessge) {
       await db
         .update(urlTable)
-        .set({ errorMessage: errorMessge })
+        .set({ errorMessage: errorMessge, processed: true })
         .where(eq(urlTable.url, oldUrlObject?.url ?? newUrl));
     }
     if (errorMessge !== "") {
@@ -224,12 +224,14 @@ export async function scrapOldestUnprocessedOrSetAllUnprocessedAndTryAgain() {
     orderBy: [asc(urlTable.lastScraped)],
   });
 
+  // console.log({ oldestActiveUnprocessedUrl });
   if (!oldestActiveUnprocessedUrl) {
     await db.update(urlTable).set({ processed: false });
     oldestActiveUnprocessedUrl = await db.query.urlTable.findFirst({
       where: and(eq(urlTable.processed, false), eq(urlTable.paused, false)),
       orderBy: [asc(urlTable.lastScraped)],
     });
+    // console.log({ oldestActiveUnprocessedUrl });
   }
   if (!oldestActiveUnprocessedUrl) {
     // console.log("No oldest unprocessed url found");
