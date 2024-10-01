@@ -14,12 +14,10 @@ import { sendErrorEmail } from "../actions";
 
 export async function getProduct() {
   const endpoint = "https://api.lemonsqueezy.com/v1/products";
-  const apiKey =
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NGQ1OWNlZi1kYmI4LTRlYTUtYjE3OC1kMjU0MGZjZDY5MTkiLCJqdGkiOiIyNjJlYjEwZGFjZWZkNzM1N2MyYzc0YjI2YTFkMWI3ZDU3ZTNiMzljODlmMTZlYWM5NWM0NjBkOTYyOGQyMTI3NmQ0OTk5Y2M5MTdmNDcxMiIsImlhdCI6MTcyMzU1ODE0OC4wMDc2ODcsIm5iZiI6MTcyMzU1ODE0OC4wMDc2ODksImV4cCI6MjAzOTA5MDk0Ny45NTkxNDksInN1YiI6IjIyNTIyMjkiLCJzY29wZXMiOltdfQ.PkShm6Et2DugML9H4mEhdAbd5VDUodKBqxuU50GqD1pQpFkNAaKjR7tOUD2EiHNxdGWs09J9ayABo_maTcIIzURvDTKppwDWj0uy_BA-MAieCoWRgdw8WPuBJqGLsKIqGirX3NsVPmeZP4kxH4rgAIdlcvP5adcgVI_LsUALIWaC7p-Ilv3FjyhLL88TXfv1Emz3j3v4-I_edCVdIMdj5O62gknwloyE5X5RVZZ8uDzXr9ibdU5kTh7QdpMISAzIwtuCt8dKbQQe892OH3uMYW4TBd1YoyUsn2W-hRhHololmLIWJOgWhTmMRXsg_UiWo-OP-4tGQcGsSwte1MrwrGFBg0r19lYe85tWEpn2EXwdXdzyEIBe2UNL4BbysQcBKkioJwGWTFSaRyyiFtbiNfpIoZCwhJuIWX7IJNd1YXtPjZJcJpUKn2aAIhO8i_kS-q-8ByCCs5ZXE5hvr-FucbpMcH97fh2q9xGKadne6MmWexa9ciAdcKRdQfLsnh4K";
   const headers = {
     Accept: "application/vnd.api+json",
     "Content-Type": "application/vnd.api+json",
-    Authorization: `Bearer ${apiKey}`,
+    Authorization: `Bearer ${process.env.LEMONSQUEEZY_API_KEY}`,
   };
 
   const res = await fetch(endpoint, { headers });
