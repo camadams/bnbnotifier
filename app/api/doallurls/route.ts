@@ -6,9 +6,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   var apisecret = request.headers.get("authorization");
-  console.log({ la: apisecret });
-  console.log({ ta: process.env.API_SECRET });
 
+  if (process.env.NODE_ENV == "production") {
+    apisecret = (apisecret && apisecret.split(" ")[1]) || ""; // Assuming 'Bearer <token>' format
+  }
   if (apisecret !== process.env.API_SECRET) {
     return NextResponse.json("invalid", { status: 403 });
   }
